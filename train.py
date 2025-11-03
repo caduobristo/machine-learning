@@ -102,9 +102,66 @@ feature_importance = (pd.Series(arvore.feature_importances_, index=X_train.colum
 # Soma acumulativa da importãncia de cada feature
 feature_importance['acum.']=feature_importance[0].cumsum()
 # Separa apenas as features que, somadas, tem importãncia de até 96%
-feature_importance[feature_importance['acum.'] < 0.96]
-print(feature_importance)
+
+print(feature_importance[feature_importance['acum.'] < 0.96])
 
 '''
 Árvore de classifição para entender melhor a importância de cada variável.
 '''
+
+# %%
+
+best_features = (feature_importance[feature_importance['acum.'] < 0.96]['index']
+                 .tolist())
+X_train_best = X_train[best_features]
+
+'''
+Utilizando apenas as melhores features na base de treino
+'''
+
+# %%
+
+# MODIFY
+
+from feature_engine import discretisation
+
+# Filtro das features que não são uma probabilidade
+features_discre = X_train_best.loc[:, ~X_train_best.columns.str.startswith('prop')].columns.to_list()
+
+tree_discretisation = discretisation.DecisionTreeDiscretiser(variables=features_discre,
+                                                             regression=False,
+                                                             bin_output='bin_number',
+                                                             cv=3)
+
+tree_discretisation.fit(X_train_best, y_train)
+
+X_train_tranform = tree_discretisation.transform(X_train_best)
+print(X_train_tranform.head())
+
+'''
+Discretização das variáveis que não são uma probabilidade utilizando uma árvore.
+'''
+
+# %%
+
+# MODEL
+from sklearn import linear_model
+
+reg = linear_model.LogisticRegression(penalty=None,
+                                      random_state=42,
+                                      max_iter=1000000)
+reg.fit(X_train_tranform, y_train)
+
+# %%
+
+from sklearn import metrics
+
+y_train_predict = reg.predict(X_train_tranform)
+y_train_prob = reg.predict_proba(X_train_tranform)[:,1]
+
+y_predict_acc = metrics.accuracy_score(y_train, y_train_predict)
+y_predict_auc = metrics.roc_auc_score(y_train, y_train_prob)
+print(y_predict_acc)
+print(y_predict_auc)
+
+# %%

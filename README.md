@@ -24,3 +24,8 @@ O objetivo do projeto é prever quais usuários deixam de acompanhar as lives do
 - Criação de um resumo estatístico (média e mediana) das variáveis para cada classe do target.
 - Cálculo das diferenças absolutas e relativas entre as classes, para identificar quais variáveis mais influenciam o churn.
 - Treinamento de uma árvore de decisão simples apenas para analisar a importância das variáveis, sem foco em performance ainda.
+
+## Modify
+
+- Filtro para separar features que não são uma probabilidade.
+- Discretização das features que não são probabilidade.
