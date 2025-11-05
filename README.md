@@ -27,5 +27,12 @@ O objetivo do projeto é prever quais usuários deixam de acompanhar as lives do
 
 ## Modify
 
-- Filtro para separar features que não são uma probabilidade.
-- Discretização das features que não são probabilidade.
+- Filtro para separar features que não são uma proporção.
+- Discretização das features que não são proporção.
+- Aplicação de OneHotEncoder nas features discretizadas (resultados levemente melhores obtidos).
+
+## Model
+
+- Criação de um pipeline com as modificações feitas nos dados e um modelo.
+- Aplicação dos modelos de Regressão Logística, RandomForest e NaiveBayes.
+- Utilização do MLFlow para ajudar na comparação dos resultados de cada modelo.
